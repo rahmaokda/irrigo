@@ -119,8 +119,10 @@ bool FirebaseService::publishState(const ZoneState &state) {
 bool FirebaseService::pushHistory(int moisture) {
   uint32_t t = now();
   if (!t) return false;  // no valid timestamp yet
-  // Stored outside zones/<zone> so reading the current state never downloads history.
-  String path = devicePath() + "/moistureHistory/" + ZONE_ID + "/" + String(t);
+  // Stored outside devices/ so reading the current state (ESP32 or app) never
+  // downloads history.
+  String path = String("users/") + auth.token.uid.c_str() + "/moistureHistory/" +
+                DEVICE_ID + "/" + ZONE_ID + "/" + String(t);
   if (!Firebase.RTDB.setInt(&fbdo, path.c_str(), moisture)) {
     Serial.printf("History write failed: %s\n", fbdo.errorReason().c_str());
     return false;

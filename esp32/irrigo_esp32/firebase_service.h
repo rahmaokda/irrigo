@@ -17,7 +17,7 @@ struct ZoneState {
 
 // Wraps Wi-Fi, NTP time and Firebase Realtime Database access.
 // Paths: users/<uid>/devices/<deviceId>/zones/<zoneId>
-//        users/<uid>/devices/<deviceId>/moistureHistory/<zoneId>/<epoch>
+//        users/<uid>/moistureHistory/<deviceId>/<zoneId>/<epoch>
 class FirebaseService {
  public:
   void begin();

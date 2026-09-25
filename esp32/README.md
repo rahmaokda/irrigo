@@ -37,8 +37,9 @@ well-watered soil. Put them in `SOIL_RAW_DRY` / `SOIL_RAW_WET` in `config.h`.
 ## Database layout
 
 ```
-users/<uid>/devices/<DEVICE_ID>/
-  zones/<ZONE_ID>/
+users/<uid>/
+  name, email               app      (written at registration)
+  devices/<DEVICE_ID>/zones/<ZONE_ID>/
     name          app      (created by ESP32 on first run)
     threshold     app      pump turns ON below this %, OFF above threshold + HYSTERESIS_PERCENT
     autoMode      app      true = ESP32 decides, false = follows pumpCommand
@@ -48,11 +49,11 @@ users/<uid>/devices/<DEVICE_ID>/
     online        ESP32    always true while reporting — use lastSeen for offline detection
     lastSeen      ESP32    epoch seconds, updated every 5 s
     lastWatered   ESP32    epoch seconds when the pump last started
-  moistureHistory/<ZONE_ID>/<epoch seconds>: moisture %   (every 10 min)
+  moistureHistory/<DEVICE_ID>/<ZONE_ID>/<epoch seconds>: moisture %   (every 10 min)
 ```
 
-History is kept outside `zones/` so the ESP32 (and the dashboard) never download it
-when reading the current state.
+History is kept outside `devices/` so the ESP32 and the app's dashboard never
+download it when reading the current state.
 
 The app should treat the device as offline when `lastSeen` is older than ~30 s.
 

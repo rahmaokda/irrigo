@@ -10,8 +10,41 @@ import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  final options = DefaultFirebaseOptions.currentPlatform;
+  // Missing when `flutterfire configure` ran before the Realtime Database
+  // existed; the database SDK would otherwise crash with a cryptic error.
+  if ((options.databaseURL ?? '').isEmpty) {
+    runApp(const _SetupErrorApp());
+    return;
+  }
+  await Firebase.initializeApp(options: options);
   runApp(const IrrigoApp());
+}
+
+class _SetupErrorApp extends StatelessWidget {
+  const _SetupErrorApp();
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.light(),
+      home: const Scaffold(
+        body: Center(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Text(
+              'Realtime Database URL missing.\n\n'
+              '1. Firebase console → Build → Realtime Database → Create database.\n'
+              '2. Run `flutterfire configure` again in the app/ folder.\n'
+              '3. Restart the app.',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class IrrigoApp extends StatelessWidget {
